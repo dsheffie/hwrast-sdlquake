@@ -99,7 +99,7 @@ void GL_BeginRendering(int *x, int *y, int *width, int *height) {
   hw_clear(engine);          // clear OUR color + depth each frame
 }
 
-extern long tgl_tris, tgl_culls;   // tgl_engine.cc per-frame counters
+extern long tgl_tris, tgl_culls, tgl_texloads;   // tgl_engine.cc per-frame counters
 
 void GL_EndRendering(void) {
   hw_fb_read(engine, fbrgb);                            // engine FB (RGB, top-down)
@@ -111,8 +111,8 @@ void GL_EndRendering(void) {
     // (0-ish = 2D/loading, thousands = the 3D world view)
     static int hb = -1;
     if (hb < 0) hb = getenv("HW_STATS") ? 1 : 0;
-    if (hb) fprintf(stderr, "[hb] frame %d: %ld tris, %ld culled\n", frame, tgl_tris, tgl_culls);
-    tgl_tris = 0; tgl_culls = 0;
+    if (hb) fprintf(stderr, "[hb] frame %d: %ld tris, %ld culled, %ld texloads\n", frame, tgl_tris, tgl_culls, tgl_texloads);
+    tgl_tris = 0; tgl_culls = 0; tgl_texloads = 0;
     if (getenv("GEN_FRAME_PPM_FILES")) {
       char name[64]; FILE *fp;
       sprintf(name, "frame%04d.ppm", frame);
