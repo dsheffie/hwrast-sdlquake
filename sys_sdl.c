@@ -379,8 +379,14 @@ int main (int c, char **v)
 //	signal(SIGFPE, floating_point_exception_handler);
 	signal(SIGFPE, SIG_IGN);
 
-	parms.memsize = 8*1024*1024;
-	parms.membase = malloc (parms.memsize);
+	// Keep the Quake heap in BSS rather than malloc'ing it: engine strings are
+	// referenced as 32-bit `string_t` offsets (ptr - pr_strings), so pr_strings
+	// must stay within int range of the static string buffers (sv.name,
+	// pr_string_temp, ...).  On 64-bit, a malloc'd heap is mmap'd terabytes from
+	// BSS and the offset truncates to garbage; a BSS heap keeps it all in range.
+	static byte quake_heap[8*1024*1024];
+	parms.memsize = sizeof(quake_heap);
+	parms.membase = quake_heap;
 	parms.basedir = basedir;
 	parms.cachedir = cachedir;
 

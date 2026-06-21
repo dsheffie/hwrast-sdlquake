@@ -432,7 +432,7 @@ float Q_atof (char *str)
 */
 
 #ifdef SDL
-#include "SDL_byteorder.h"
+#include "SDL_endian.h"		/* was SDL_byteorder.h in SDL1.2 */
 #endif
 
 qboolean        bigendien;
